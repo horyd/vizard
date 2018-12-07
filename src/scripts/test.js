@@ -2,6 +2,7 @@ const path = require('path');
 const fsExtra = require('fs-extra');
 const uniqWith = require('lodash/uniqWith');
 const isEqual = require('lodash/isEqual');
+const xor = require('lodash/xor');
 const zip = require('lodash/zip');
 const junitReportBuilder = require('junit-report-builder');
 const {imgDiff} = require('img-diff-js');
@@ -63,19 +64,35 @@ async function doAllGoldensHaveATest({
         const [suiteName, testName, dimensions] = goldenScreenshotPath.split(path.sep).slice(-3);
         const [viewportWidth, viewportHeight] = path.basename(dimensions, '.jpeg').split('x');
 
-        return testPermutations.some((test) => (
+        const goldenHasTest = testPermutations.some((test) => (
             test.suiteName === suiteName
             && test.testName === testName
             && test.viewportWidth.toString() === viewportWidth.toString()
             && test.viewportHeight.toString() === viewportHeight.toString()
         ));
+
+        if (!goldenHasTest) {
+            logger.info(`Golden screenshot at ${goldenScreenshotPath} has no associated test`);
+        }
+
+        return goldenHasTest;
     });
 }
 
 function areAllTestsUnique({
     testPermutations,
 }) {
-    return uniqWith(testPermutations, isEqual).length === testPermutations.length;
+    const uniqueTests = uniqWith(testPermutations, isEqual);
+
+    const success = uniqueTests.length === testPermutations.length;
+
+    if (!success) {
+        xor(uniqueTests, testPermutations).forEach(({testName, suiteName}) => {
+            logger.info(`Duplicate test: ${suiteName}/${testName}`);
+        });
+    }
+
+    return success;
 }
 
 async function testScreenshots({

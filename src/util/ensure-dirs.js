@@ -11,7 +11,7 @@ module.exports = async function ensureDirs({
 
     await Promise
         .all(testsByViewport.map(async ({viewportWidth, viewportHeight, tests}) =>
-            await Promise.all(tests.map(async ({testName, suiteName}) => [true, false]
+            await Promise.all(tests.map(async ({testName, suiteName}) => await Promise.all([true, false]
                 .map((isTest) => getScreenshotPath({
                     config,
                     isTest,
@@ -21,5 +21,5 @@ module.exports = async function ensureDirs({
                     viewportHeight,
                 }))
                 .map(path.dirname)
-                .map(async (dirPath) => await fsExtra.ensureDir(dirPath))))));
+                .map(async (dirPath) => await fsExtra.ensureDir(dirPath)))))));
 };

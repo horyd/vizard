@@ -11,7 +11,7 @@ const IGNORE_LOG_MESSAGES = [
     'Download the React DevTools for a better development experience',
 ];
 
-const PAGE_ARTIFICIAL_WAIT_MS = 3000;
+const PAGE_ARTIFICIAL_WAIT_MS = 4500;
 
 module.exports = async function setupPuppeteer(config) {
     const {
