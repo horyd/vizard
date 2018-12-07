@@ -55,9 +55,12 @@ vizard test
 ## CLI usage
 ```
     vizard help         - Show this message
-    vizard make-golden [--missing] [--suite SUITE-1 SUITE-2 SUITE-3] - Make golden screenshots from each of the test cases
-    vizard test         - Make golden screenshots and test them against the golden screenshots
     vizard interact     - Open an interactive web page to explore rendered viz test cases
+    vizard make-golden  - Make golden screenshots from each of the test cases
+             --missing                  - Only take golden screenshots that don't yet exist
+             --suite SUITE-1 SUITE-2    - Run specific suites
+             --skip-compile             - Don't compile the tests 
+    vizard test         - Make golden screenshots and test them against the golden screenshots
 ```
 
 ## Configuration

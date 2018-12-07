@@ -7,7 +7,10 @@ ${packageJson.name} version ${packageJson.version}
 Usage:
     ${packageJson.name} help         - Show this message
     ${packageJson.name} interact     - Open an interactive web page to explore rendered viz test cases
-    ${packageJson.name} make-golden [--missing] [--suite SUITE-1 SUITE-2 SUITE-3] - Make golden screenshots from each of the test cases
+    ${packageJson.name} make-golden  - Make golden screenshots from each of the test cases
+             --missing                  - Only take golden screenshots that don't yet exist
+             --suite SUITE-1 SUITE-2    - Run specific suites
+             --skip-compile             - Don't compile the tests 
     ${packageJson.name} test         - Make golden screenshots and test them against the golden screenshots
 `);
 };

@@ -9,13 +9,18 @@ const logger = require('../util/logger');
 module.exports = async function makeGolden({
     shouldReplaceMissingOnly,
     specificSuiteNames,
+    skipCompile,
     config,
 }) {
     await clean({
         config,
         clearGolden: !!specificSuiteNames && !!shouldReplaceMissingOnly,
     });
-    await compileTests(config);
+
+    if (!skipCompile) {
+        await compileTests(config);
+    }
+
     const {browsers, server, pages} = await setupPuppeteer(config);
 
     try {

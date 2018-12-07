@@ -42,4 +42,5 @@ module.exports = async function compileTests({
             resolve();
         });
     });
+    logger.info('Compilation complete');
 };

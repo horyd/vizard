@@ -4,6 +4,7 @@ const printHelp = require('./scripts/help');
 const getConfig = require('./util/config');
 const makeGolden = require('./scripts/make-golden');
 const test = require('./scripts/test');
+const compileTests = require('./util/compile-tests');
 const logger = require('./util/logger');
 
 async function main() {
@@ -24,10 +25,15 @@ async function main() {
             await makeGolden({
                 config: await getConfig(),
                 shouldReplaceMissingOnly: !!args.missing,
+                skipCompile: !!args['skip-compile'],
                 specificSuiteNames: args.suite
                     ? process.argv.slice(3).filter((arg) => !arg.startsWith('--'))
                     : null,
             });
+            break;
+
+        case 'compile':
+            await compileTests(config);
             break;
 
         case 'test':
