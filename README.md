@@ -84,3 +84,4 @@ Valid configuration options are as follows:
 * Improve documentation
 * Example repository
 * Implement `vizard interact`
+* Implement extended framework features (`beforeEach`, `afterAll` et al)

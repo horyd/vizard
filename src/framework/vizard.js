@@ -37,6 +37,7 @@ VizardInstance.prototype.runTests = async function ({
 
         // Run the test to render something to the viewport
         let screenshotTarget;
+
         try {
             screenshotTarget = await testRunner(target);
         } catch (e) {

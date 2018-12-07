@@ -14,6 +14,7 @@ module.exports = async function makeGolden({
 }) {
     await clean({
         config,
+        skipCompile,
         clearGolden: !!specificSuiteNames && !!shouldReplaceMissingOnly,
     });
 

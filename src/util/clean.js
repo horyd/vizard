@@ -4,13 +4,16 @@ const fsExtra = require('fs-extra');
 module.exports = async function clean({
     config,
     clearGolden = false,
+    skipCompile = false,
 }) {
     const {
         tmpDir,
         outputPath,
     } = config;
 
-    await fsExtra.emptyDir(tmpDir);
+    if (!skipCompile) {
+        await fsExtra.emptyDir(tmpDir);
+    }
 
     await fsExtra.emptyDir(path.join(outputPath, 'tested'));
     await fsExtra.emptyDir(path.join(outputPath, 'diff'));

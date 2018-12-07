@@ -129,11 +129,14 @@ async function testScreenshots({
 
 module.exports = async function test({
     config,
+    skipCompile,
 }) {
     const {testReportOutputDir} = config;
 
-    await clean({config});
-    await compileTests(config);
+    await clean({config, skipCompile});
+    if (!skipCompile) {
+        await compileTests(config);
+    }
     const {browsers, server, pages} = await setupPuppeteer(config);
 
     let testsPassed = true;

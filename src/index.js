@@ -39,6 +39,7 @@ async function main() {
         case 'test':
             await test({
                 config: await getConfig(),
+                skipCompile: !!args['skip-compile'],
             });
             break;
 
