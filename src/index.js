@@ -33,7 +33,7 @@ async function main() {
             break;
 
         case 'compile':
-            await compileTests(config);
+            await compileTests(await getConfig());
             break;
 
         case 'test':
