@@ -100,6 +100,7 @@ async function testScreenshots({
     testPermutations,
     reportBuilder,
 }) {
+    const {testReportOutputDir} = config;
     let testsPassed = true;
 
     logger.info('Testing screenshots');
@@ -109,7 +110,7 @@ async function testScreenshots({
     await Promise.all(testPermutations.map(async ({testName, suiteName, viewportHeight, viewportWidth}) => {
         const testCase = screenshotsTestSuite
             .testCase()
-            .className(testName)
+            .className(`${suiteName}/${testName}`)
             .name(`${viewportWidth}x${viewportHeight}`);
 
         const [testedPath, diffPath, goldenPath] = [{isTest: true}, {isDiff: true}, {isTest: false}]
@@ -135,9 +136,24 @@ async function testScreenshots({
         });
 
         if (!imagesAreSame) {
+            // Record the test as a failure
             testsPassed = false;
             logger.info(`Test ${suiteName}/${testName}/${viewportWidth}x${viewportHeight} differed by ${diffCount} pixels`);
-            testCase.failure();
+            testCase.failure(`Differed by ${diffCount} pixels`);
+
+            // Save the golden/tested/diff images to the reports directory
+            await Promise.all([
+                {baseDir: 'diff', originalPath: diffPath},
+                {baseDir: 'tested', originalPath: testedPath},
+                {baseDir: 'golden', originalPath: goldenPath},
+            ].map(async ({baseDir, originalPath}) => {
+                const reportOutputPath = path.join(testReportOutputDir, baseDir, suiteName, testName, `${viewportWidth}x${viewportHeight}`);
+
+                await fsExtra.ensureDir(reportOutputPath);
+                await fsExtra.copy(originalPath, `${reportOutputPath}.jpeg`);
+            }));
+
+            testCase.errorAttachment(path.resolve(path.join(testReportOutputDir, 'diff', suiteName, testName, `${viewportWidth}x${viewportHeight}.jpeg`)));
         }
     }));
 
