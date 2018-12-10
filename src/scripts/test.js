@@ -147,10 +147,10 @@ async function testScreenshots({
                 {baseDir: 'tested', originalPath: testedPath},
                 {baseDir: 'golden', originalPath: goldenPath},
             ].map(async ({baseDir, originalPath}) => {
-                const reportOutputPath = path.join(testReportOutputDir, baseDir, suiteName, testName, `${viewportWidth}x${viewportHeight}`);
+                const reportOutputPath = path.join(testReportOutputDir, 'failing-screenshots', baseDir, suiteName, testName);
 
                 await fsExtra.ensureDir(reportOutputPath);
-                await fsExtra.copy(originalPath, `${reportOutputPath}.jpeg`);
+                await fsExtra.copy(originalPath, path.join(reportOutputPath, `${viewportWidth}x${viewportHeight}.jpeg`));
             }));
 
             testCase.errorAttachment(path.resolve(path.join(testReportOutputDir, 'diff', suiteName, testName, `${viewportWidth}x${viewportHeight}.jpeg`)));
