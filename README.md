@@ -78,6 +78,9 @@ Valid configuration options are as follows:
 * `testRunnerHtml`: Optional custom HTML page in which tests should be executed.
 * `tmpDir`: Optional custom directory to store temporary files made by Vizard.
 
+## Docker
+The `Dockerfile` contained in this repository is published as `foxsportsauweb/vizard`.
+Running your visual regression tests inside a consistent container is a good way to avoid false-negatives on screenshot comparisons.
 
 ## TODO
 * Automated tests
