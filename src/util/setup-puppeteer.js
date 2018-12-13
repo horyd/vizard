@@ -27,7 +27,7 @@ module.exports = async function setupPuppeteer(config) {
     logger.info(`Setting up server on port ${port}`);
 
     // If the user supplied a testRunnerHtml via config, run in their cwd
-    const server = await serve(testRunnerHtml ? process.cwd() : path.join(__dirname, '..', '..'), {port, silent: true, noClipboard: true});
+    const server = await serve(testRunnerHtml ? process.cwd() : path.join(__dirname, '..', '..'), {port, silent: true, clipless: true});
 
     const puppeteerOptions = {
         args: ['--no-sandbox', '--disable-setuid-sandbox'],
