@@ -6,7 +6,7 @@ ${packageJson.name} version ${packageJson.version}
     
 Usage:
     ${packageJson.name} help         - Show this message
-    ${packageJson.name} interact     - Open an interactive web page to explore rendered viz test cases
+    ${packageJson.name} compile      - Compile the local test cases
     ${packageJson.name} make-golden  - Make golden screenshots from each of the test cases
              --missing                  - Only take golden screenshots that don't yet exist
              --suite SUITE-1 SUITE-2    - Run specific suites

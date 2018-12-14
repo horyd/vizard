@@ -55,7 +55,7 @@ vizard test
 ## CLI usage
 ```
     vizard help         - Show this message
-    vizard interact     - Open an interactive web page to explore rendered viz test cases
+    vizard compile      - Compile the local test cases
     vizard make-golden  - Make golden screenshots from each of the test cases
              --missing                  - Only take golden screenshots that don't yet exist
              --suite SUITE-1 SUITE-2    - Run specific suites
@@ -86,5 +86,4 @@ Running your visual regression tests inside a consistent container is a good way
 * Automated tests
 * Improve documentation
 * Example repository
-* Implement `vizard interact`
 * Implement extended framework features (`beforeEach`, `afterAll` et al)

@@ -17,10 +17,6 @@ async function main() {
     }
 
     switch (args._[0]) {
-        case 'interact':
-            logger.fatal('Not implemented yet');
-            break;
-
         case 'make-golden':
             await makeGolden({
                 config: await getConfig(),

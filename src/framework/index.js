@@ -1,4 +1,5 @@
 const VizardInstance = require('./vizard');
+const toolkit = require('./toolkit');
 
 // Intentionally runs immediately rather than waiting for DOM because the tests do `describe()` straight away
 (function () {
@@ -9,6 +10,7 @@ const VizardInstance = require('./vizard');
         vizardInstance.registerSuite({suiteName, testCreator, suiteOptions});
     };
 
+    // it('focused', function (target) {...});
     window.it = function (testName, testRunner, testOptions) {
         vizardInstance.registerTestCase({testName, testRunner, testOptions});
     };
@@ -18,4 +20,5 @@ const VizardInstance = require('./vizard');
     window._getSuites = () => vizardInstance.registeredSuites;
     window._getTests = () => vizardInstance.registeredTests;
     window._reset = () => vizardInstance.reset;
+    window.toolkit = toolkit;
 })();
