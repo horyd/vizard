@@ -1,7 +1,10 @@
+const chunk = require('lodash/chunk');
 const times = require('lodash/times');
 const getScreenshotPath = require('./screenshot-path');
 const logger = require('./logger');
 const runPromisesSequentially = require('./run-promises-sequentially');
+
+const PAGE_REFRESH_FREQUENCY = 10;
 
 module.exports = async function takeScreenshots({
     config,
@@ -55,9 +58,16 @@ module.exports = async function takeScreenshots({
                 }),
             }));
 
-            const runTestsOnWindow = (tests) => window._runTests({tests});
+            // We reload the page every few tests (defined by PAGE_REFRESH_FREQUENCY), because sometimes Puppeteer hangs, and reloading mitigates that
+            const chunkedTests = chunk(testsForWindow, PAGE_REFRESH_FREQUENCY);
 
-            await page.evaluate(runTestsOnWindow, testsForWindow);
+            await runPromisesSequentially(chunkedTests.map((tests) => async () => {
+                const runTestsOnWindow = (tests) => window._runTests({tests});
+
+                await page.evaluate(runTestsOnWindow, tests);
+
+                await page.reload();
+            }));
         }));
     }));
 
