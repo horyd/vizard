@@ -63,9 +63,8 @@ module.exports = async function takeScreenshots({
 
             // We reload the page every few tests (defined by PAGE_REFRESH_FREQUENCY), because sometimes Puppeteer hangs, and reloading mitigates that
             const chunkedTests = chunk(testsForWindow, PAGE_REFRESH_FREQUENCY);
-
-            const resetPage = () => page.reload().then(() => page.evaluate(() => window._registerTests()));
-
+            const registerTests = () => page.evaluate(() => window._registerTests());
+            const resetPage = () => page.reload().then(registerTests);
             const createTestSetRunner = (tests) => async () => {
                 // Try running the tests 3 times (restarting if they timeout)
                 const tryRunningTest = () => new Promise((resolve, reject) => {
