@@ -66,23 +66,30 @@ module.exports = async function takeScreenshots({
             const registerTests = () => page.evaluate(() => window._registerTests());
             const resetPage = () => page.reload().then(registerTests);
             const createTestSetRunner = (tests) => async () => {
-                // Try running the tests 3 times (restarting if they timeout)
-                const tryRunningTest = () => new Promise((resolve, reject) => {
-                    // If the test takes too long, reject the promise and try again
-                    const hungNodeProcessWarning = setTimeout(() => {
-                        logger.warn(`Thread ${threadNumber} at viewport ${viewportWidth}x${viewportHeight} has been running for more than ${Math.floor(SLOW_TEST_WARNING_TIME_MS / 1000)}s. Retrying.`);
-                        resetPage().finally(reject);
-                    }, SLOW_TEST_WARNING_TIME_MS);
+                const tryRunningTest = () => {
+                    let hungPageTimeout = null;
+                    const resetPageAfterHangingPromise = new Promise((resolve, reject) => {
+                        hungPageTimeout = setTimeout(() => {
+                            logger.warn(`Thread ${threadNumber} at viewport ${viewportWidth}x${viewportHeight} has been running for more than ${Math.floor(SLOW_TEST_WARNING_TIME_MS / 1000)}s. Retrying.`);
+                            reject();
+                        }, SLOW_TEST_WARNING_TIME_MS);
+                    });
 
-                    const runTestsOnWindow = (tests) => window._runTests({tests});
+                    const runTestsOnWindowPromise = new Promise((resolve, reject) => {
+                        const runTestsOnWindow = (tests) => window._runTests({tests});
 
-                    page.evaluate(runTestsOnWindow, tests)
-                        .then(() => {
-                            clearTimeout(hungNodeProcessWarning);
-                            resolve();
-                        })
-                        .catch(reject);
-                });
+                        page.evaluate(runTestsOnWindow, tests)
+                            .then(() => clearTimeout(hungPageTimeout))
+                            .then(resolve)
+                            .catch(reject);
+                    });
+
+                    return Promise.race([resetPageAfterHangingPromise, runTestsOnWindowPromise])
+                        .catch(() => resetPage().then(() => {
+                            // Throw an error so we can retry the tests
+                            throw new Error('Tests failed, needed to reset page');
+                        }));
+                };
 
                 let testRunningPromise = tryRunningTest();
 
