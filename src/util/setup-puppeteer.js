@@ -11,7 +11,21 @@ const IGNORE_LOG_MESSAGES = [
     'Download the React DevTools for a better development experience',
 ];
 
-const PAGE_ARTIFICIAL_WAIT_MS = 4500;
+const PAGE_WAIT_INCREMENTS_MS = 500;
+const MAX_PAGE_WAIT_MS = 30 * 1000;
+
+// Keep trying `thingToTry` until it resolves the promise, for a max of maxDuration
+const tryIncrementally = (thingToTry, incrementDuration, maxDuration) => {
+    const getWaitingPromise = () => new Promise((resolve) => setTimeout(resolve, incrementDuration));
+
+    let fullPromise = getWaitingPromise().then(thingToTry);
+
+    for (let timeElapsed = incrementDuration; timeElapsed <= maxDuration; timeElapsed += incrementDuration) {
+        fullPromise = fullPromise.catch(() => getWaitingPromise().then(thingToTry));
+    }
+
+    return fullPromise;
+};
 
 module.exports = async function setupPuppeteer(config) {
     const {
@@ -46,7 +60,7 @@ module.exports = async function setupPuppeteer(config) {
                 .some((ignoreMessageContaining) => messageText.includes(ignoreMessageContaining));
 
             if (!messageContainsAnyIgnoreString) {
-                logger.debug(` > ${messageText}`);
+                logger.info(` > ${messageText}`);
             }
         });
     });
@@ -84,9 +98,12 @@ module.exports = async function setupPuppeteer(config) {
                 await page.click(selector);
             }),
         ])
-            // Artificial wait for the page to be ready
-            .then(() => new Promise((resolve) => setTimeout(resolve, PAGE_ARTIFICIAL_WAIT_MS)))
-            .then(() => page.goto(`http://localhost:${port}/${testRunnerHtml || 'bin/runner.html'}`))
+            // Try to go to that page every PAGE_WAIT_INCREMENTS_MS (it takes some time for the server to actually be up)
+            .then(() => tryIncrementally(
+                () => page.goto(`http://localhost:${port}/${testRunnerHtml || 'bin/runner.html'}`),
+                PAGE_WAIT_INCREMENTS_MS,
+                MAX_PAGE_WAIT_MS
+            ))
             .then(() => page.waitForFunction(() => !!window._registerTests))
     )));
 

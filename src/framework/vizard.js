@@ -32,6 +32,10 @@ VizardInstance.prototype.runTests = async function ({
     const vizardTargetRoot = document.getElementById('vizardTargetRoot');
 
     await runPromisesSequentially(tests.map(({screenshotOutputPath, testName, suiteName}) => async () => {
+        const hungConsoleWarningTimeout = setTimeout(() => {
+            console.log(`${suiteName}/${testName} being slow.`);
+        }, 5 * 1000); // This is to call out tests that may be 'hung', which is helpful for debugging
+
         const target = vizardTargetRoot.appendChild(document.createElement('div'));
         const {testRunner} = this.registeredTests.find((test) => test.testName === testName && test.suiteName === suiteName);
 
@@ -53,6 +57,8 @@ VizardInstance.prototype.runTests = async function ({
         vizardTargetRoot.removeChild(target);
 
         await window.resetMouse();
+
+        clearTimeout(hungConsoleWarningTimeout);
     }));
 };
 
