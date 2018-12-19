@@ -15,25 +15,17 @@ const PAGE_WAIT_INCREMENTS_MS = 500;
 const MAX_PAGE_WAIT_MS = 30 * 1000;
 
 // Keep trying `thingToTry` until it resolves the promise, for a max of maxDuration
-function tryIncrementally(thingToTry, incrementDuration, maxDuration) {
-    return new Promise((resolve, reject) => {
-        const startTime = Date.now();
-        const endTime = startTime + maxDuration;
-        const interval = setInterval(() => {
-            try {
-                const returnVal = thingToTry();
+const tryIncrementally = (thingToTry, incrementDuration, maxDuration) => {
+    const getWaitingPromise = () => new Promise((resolve) => setTimeout(resolve, incrementDuration));
 
-                clearInterval(interval);
-                resolve(returnVal);
-            } catch (e) {
-                if (Date.now() >= endTime) {
-                    clearInterval(interval);
-                    reject(e);
-                }
-            }
-        }, incrementDuration);
-    });
-}
+    let fullPromise = getWaitingPromise().then(thingToTry);
+
+    for (let timeElapsed = incrementDuration; timeElapsed <= maxDuration; timeElapsed += incrementDuration) {
+        fullPromise = fullPromise.catch(() => getWaitingPromise().then(thingToTry));
+    }
+
+    return fullPromise;
+};
 
 module.exports = async function setupPuppeteer(config) {
     const {
