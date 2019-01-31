@@ -77,6 +77,10 @@ Valid configuration options are as follows:
 * `testFilePattern`: Optional file extension for test files, defaults to `.viz.js`
 * `testRunnerHtml`: Optional custom HTML page in which tests should be executed.
 * `tmpDir`: Optional custom directory to store temporary files made by Vizard.
+* `pixelMatchOptions`: Options for pixelMatch (the tool used to compare the images)
+    * `threshold`: (default: `0`) Matching threshold, ranges from `0` to `1`. Smaller values make the comparison more sensitive. 
+    * `includeAA`: (default: `false`)  If `true`, disables detecting and ignoring anti-aliased pixels. 
+ 
 
 ## Docker
 The `Dockerfile` contained in this repository is published as `foxsportsauweb/vizard`.

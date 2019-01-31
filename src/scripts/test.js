@@ -100,7 +100,7 @@ async function testScreenshots({
     testPermutations,
     reportBuilder,
 }) {
-    const {testReportOutputDir} = config;
+    const {testReportOutputDir, pixelMatchOptions} = config;
     let testsPassed = true;
 
     logger.info('Testing screenshots');
@@ -129,10 +129,7 @@ async function testScreenshots({
             diffFilename: diffPath,
             generateOnlyDiffFile: true,
 
-            options: {
-                threshold: 0,
-                includeAA: false,
-            },
+            options: pixelMatchOptions,
         });
 
         if (!imagesAreSame) {
