@@ -13,6 +13,10 @@ const DEFAULT_CONFIG = {
     testFilePattern: '.viz.js',
     testRunnerHtml: null,
     tmpDir: path.join(__dirname, '..', '..', 'tmp'),
+    pixelMatchOptions: {
+        threshold: 0,
+        includeAA: false,
+    },
 };
 
 module.exports = async function getConfig() {
@@ -47,6 +51,10 @@ module.exports = async function getConfig() {
     const fullConfig = {
         ...DEFAULT_CONFIG,
         ...configJson,
+        pixelMatchOptions: {
+            ...DEFAULT_CONFIG.pixelMatchOptions,
+            ...(configJson.pixelMatchOptions || {}),
+        },
     };
 
     logger.debug('Using config', fullConfig);
