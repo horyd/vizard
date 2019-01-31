@@ -77,8 +77,8 @@ module.exports = async function setupPuppeteer(config) {
                 const clip = {
                     x: Math.max(0, x),
                     y: Math.max(0, y),
-                    width: Math.min(page.viewport().width, width),
-                    height: Math.min(page.viewport().height, height),
+                    width: Math.max(Math.min(page.viewport().width, width), 1),
+                    height: Math.max(Math.min(page.viewport().height, height), 1),
                 };
 
                 await takeScreenshot({
