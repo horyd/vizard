@@ -3,9 +3,9 @@ const noop = () => {}; // eslint-disable-line no-empty-function
 const _setup = () => {
     Object.assign(window, {
         resetMouse: noop,
-        takeScreenshot: (elem) => console.log('Screenshot would be taken of this element', elem),
-        puppeteerHover: (elem) => console.log('This test involves hovering on this element', elem),
-        puppeteerClick: (elem) => elem.click(),
+        takeScreenshot: (args) => console.log('Screenshot would be taken with these args', args),
+        puppeteerHover: (selector) => console.log('This test involves hovering on this element', document.querySelector(selector)),
+        puppeteerClick: (selector) => document.querySelector(selector).click(),
     });
 
     if (!window._getTests().length) {
